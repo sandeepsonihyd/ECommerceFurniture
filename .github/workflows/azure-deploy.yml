@@ -1,0 +1,64 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: 'your-app-name'    # Set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'        # Set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '9.0.x'               # Set this to the .NET Core version to use
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: src/ecommerce-furniture-react/package-lock.json
+
+    - name: Install React dependencies
+      run: |
+        cd src/ecommerce-furniture-react
+        npm ci
+
+    - name: Build React app
+      run: |
+        cd src/ecommerce-furniture-react
+        npm run build
+
+    - name: Copy React build to WebAPI
+      run: |
+        mkdir -p src/ECommerceFurniture.WebAPI/wwwroot
+        cp -r src/ecommerce-furniture-react/build/* src/ECommerceFurniture.WebAPI/wwwroot/
+
+    - name: Restore .NET dependencies
+      run: dotnet restore
+
+    - name: Build .NET application
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish .NET application
+      run: dotnet publish src/ECommerceFurniture.WebAPI/ECommerceFurniture.WebAPI.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+    - name: 'Deploy to Azure Web App'
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        package: ${{env.DOTNET_ROOT}}/myapp 

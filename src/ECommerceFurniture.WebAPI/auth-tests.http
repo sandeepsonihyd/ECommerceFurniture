@@ -1,0 +1,43 @@
+### Test Authentication Endpoints
+
+### 1. Test Login with Valid Credentials (username = password)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testuser"
+}
+
+### 2. Test Login with Invalid Credentials (username != password)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "wrongpassword"
+}
+
+### 3. Test Login with Empty Credentials
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "",
+  "password": ""
+}
+
+### 4. Test Token Validation (replace TOKEN_HERE with actual token from login response)
+POST {{baseUrl}}/api/auth/validate
+Authorization: Bearer TOKEN_HERE
+
+### 5. Test Get Current User (replace TOKEN_HERE with actual token from login response)
+GET {{baseUrl}}/api/auth/user
+Authorization: Bearer TOKEN_HERE
+
+### 6. Test Get Current User without Token
+GET {{baseUrl}}/api/auth/user
+
+### Variables (set these in your environment)
+# @baseUrl = https://localhost:7001
+# @baseUrl = http://localhost:5001 

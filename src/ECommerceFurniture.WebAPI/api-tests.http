@@ -1,0 +1,223 @@
+### ECommerce Furniture API Tests
+@baseUrl = http://localhost:5000
+@contentType = application/json
+
+### Health Check - Test if server is running
+GET {{baseUrl}}/swagger/index.html
+
+###
+
+### CATEGORIES API TESTS ###
+
+### 1. Get all categories
+GET {{baseUrl}}/api/categories
+Accept: {{contentType}}
+
+###
+
+### 2. Get active categories only
+GET {{baseUrl}}/api/categories/active
+Accept: {{contentType}}
+
+###
+
+### 3. Get category by ID
+GET {{baseUrl}}/api/categories/1
+Accept: {{contentType}}
+
+###
+
+### 4. Get category by ID (test with non-existent ID)
+GET {{baseUrl}}/api/categories/999
+Accept: {{contentType}}
+
+###
+
+### PRODUCTS API TESTS ###
+
+### 5. Get all products
+GET {{baseUrl}}/api/products
+Accept: {{contentType}}
+
+###
+
+### 6. Get product by ID
+GET {{baseUrl}}/api/products/1
+Accept: {{contentType}}
+
+###
+
+### 7. Get product by ID (test with non-existent ID)
+GET {{baseUrl}}/api/products/999
+Accept: {{contentType}}
+
+###
+
+### 8. Get products by category (Living Room - ID = 1)
+GET {{baseUrl}}/api/products/category/1
+Accept: {{contentType}}
+
+###
+
+### 9. Get products by category (Sofas - ID = 5)
+GET {{baseUrl}}/api/products/category/5
+Accept: {{contentType}}
+
+###
+
+### 10. Search products
+GET {{baseUrl}}/api/products/search?term=sofa
+Accept: {{contentType}}
+
+###
+
+### 11. Search products by SKU
+GET {{baseUrl}}/api/products/search?term=SOFA-MOD-001
+Accept: {{contentType}}
+
+###
+
+### 12. Search products with empty term (should return bad request)
+GET {{baseUrl}}/api/products/search?term=
+Accept: {{contentType}}
+
+###
+
+### 13. Get featured products
+GET {{baseUrl}}/api/products/featured
+Accept: {{contentType}}
+
+###
+
+### 14. Get products with filters - category filter
+GET {{baseUrl}}/api/products?categoryId=1&pageNumber=1&pageSize=5
+Accept: {{contentType}}
+
+###
+
+### 15. Get products with filters - price range
+GET {{baseUrl}}/api/products?minPrice=200&maxPrice=600&pageNumber=1&pageSize=10
+Accept: {{contentType}}
+
+###
+
+### CART API TESTS ###
+
+### 16. Get cart by session ID (will create new cart if doesn't exist)
+GET {{baseUrl}}/api/cart/test-session-123
+Accept: {{contentType}}
+
+###
+
+### 17. Add item to cart
+POST {{baseUrl}}/api/cart/add
+Content-Type: {{contentType}}
+
+{
+  "sessionId": "test-session-123",
+  "productId": 1,
+  "quantity": 2
+}
+
+###
+
+### 18. Add another item to cart
+POST {{baseUrl}}/api/cart/add
+Content-Type: {{contentType}}
+
+{
+  "sessionId": "test-session-123",
+  "productId": 2,
+  "quantity": 1
+}
+
+###
+
+### 19. Get cart again to see added items
+GET {{baseUrl}}/api/cart/test-session-123
+Accept: {{contentType}}
+
+###
+
+### 20. Update cart item quantity (use cartItemId from previous response)
+PUT {{baseUrl}}/api/cart/update
+Content-Type: {{contentType}}
+
+{
+  "cartItemId": 1,
+  "quantity": 3
+}
+
+###
+
+### 21. Add item with invalid data (missing sessionId)
+POST {{baseUrl}}/api/cart/add
+Content-Type: {{contentType}}
+
+{
+  "productId": 1,
+  "quantity": 1
+}
+
+###
+
+### 22. Add item with invalid product ID
+POST {{baseUrl}}/api/cart/add
+Content-Type: {{contentType}}
+
+{
+  "sessionId": "test-session-123",
+  "productId": 999,
+  "quantity": 1
+}
+
+###
+
+### 23. Update cart item with zero quantity (should remove item)
+PUT {{baseUrl}}/api/cart/update
+Content-Type: {{contentType}}
+
+{
+  "cartItemId": 1,
+  "quantity": 0
+}
+
+###
+
+### 24. Remove specific item from cart (use cartItemId from cart response)
+DELETE {{baseUrl}}/api/cart/remove/2
+Accept: {{contentType}}
+
+###
+
+### 25. Clear entire cart
+DELETE {{baseUrl}}/api/cart/clear/test-session-123
+Accept: {{contentType}}
+
+###
+
+### 26. Get cart after clearing to verify it's empty
+GET {{baseUrl}}/api/cart/test-session-123
+Accept: {{contentType}}
+
+###
+
+### ERROR HANDLING TESTS ###
+
+### 27. Test invalid endpoint
+GET {{baseUrl}}/api/invalid-endpoint
+Accept: {{contentType}}
+
+###
+
+### 28. Test malformed JSON in POST request
+POST {{baseUrl}}/api/cart/add
+Content-Type: {{contentType}}
+
+{
+  "sessionId": "test-session-123",
+  "productId": "invalid-id",
+  "quantity": "invalid-quantity"
+}
+
+### 

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerceFurniture.Domain\ECommerceFurniture.Domain.csproj" />
+    <ProjectReference Include="..\ECommerceFurniture.Repository\ECommerceFurniture.Repository.csproj" />
+    <ProjectReference Include="..\ECommerceFurniture.DataAccess\ECommerceFurniture.DataAccess.csproj" />
+    <ProjectReference Include="..\ECommerceFurniture.Business\ECommerceFurniture.Business.csproj" />
+  </ItemGroup>
+
+</Project>
